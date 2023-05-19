@@ -38,3 +38,17 @@ def test_wc_lines_cli(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) 
     captured = capfd.readouterr()
     assert exit_status == 0
     assert captured.out.rstrip() == f"{sample_txt.lines} {sample_txt.path}"
+
+
+def test_wc_words(sample_txt: WCFixture) -> None:
+    """Test that wc returns the number of words in a file."""
+    result = wc.wc_words(sample_txt.path)
+    assert result == sample_txt.words
+
+
+def test_wc_words_cli(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) -> None:
+    """Test wc -w."""
+    exit_status = os.system(f"ccwc -w {sample_txt.path}")
+    captured = capfd.readouterr()
+    assert exit_status == 0
+    assert captured.out.rstrip() == f"{sample_txt.words} {sample_txt.path}"
