@@ -43,9 +43,13 @@ def main() -> None:
     for file_path in args.file_path:
         if args.bytes:
             print(f"{wc_bytes(file_path)} {file_path}")
-        if args.lines:
+        elif args.lines:
             print(f"{wc_lines(file_path)} {file_path}")
-        if args.words:
+        elif args.words:
             print(f"{wc_words(file_path)} {file_path}")
-        if args.chars:
+        elif args.chars:
             print(f"{wc_chars(file_path)} {file_path}")
+        else:
+            print(
+                f"{wc_lines(file_path)}\t{wc_words(file_path)}\t{wc_bytes(file_path)}\t{file_path}"
+            )
