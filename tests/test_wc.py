@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import pytest
 import wc
 
 
@@ -18,7 +19,7 @@ def test_wc_bytes(sample_txt: Path) -> None:
     assert expected == result
 
 
-def test_wc_bytes_cli(capfd, sample_txt: Path) -> None:
+def test_wc_bytes_cli(capfd: pytest.CaptureFixture[str], sample_txt: Path) -> None:
     """Test wc -c."""
     exit_status = os.system(f"ccwc -c {sample_txt}")
     captured = capfd.readouterr()

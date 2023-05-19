@@ -1,10 +1,11 @@
 """Imitate wc."""
 
+from pathlib import Path
 import os
 import argparse
 
 
-def wc(file_path: str) -> int:
+def wc(file_path: str | Path) -> int:
     return os.path.getsize(file_path)
 
 
