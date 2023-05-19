@@ -27,6 +27,9 @@ def wc_words(file_path: str | Path) -> int:
 
 def wc_chars(file_path: str | Path) -> int:
     """Return the character count."""
+    with open(file_path, encoding="utf8") as f:
+        num_chars = len(f.read())
+    return num_chars
 
 
 def main() -> None:
@@ -35,6 +38,7 @@ def main() -> None:
     parser.add_argument("-c", "--bytes", action="store_true")
     parser.add_argument("-l", "--lines", action="store_true")
     parser.add_argument("-w", "--words", action="store_true")
+    parser.add_argument("-m", "--chars", action="store_true")
     args = parser.parse_args()
     for file_path in args.file_path:
         if args.bytes:
@@ -43,3 +47,5 @@ def main() -> None:
             print(f"{wc_lines(file_path)} {file_path}")
         if args.words:
             print(f"{wc_words(file_path)} {file_path}")
+        if args.chars:
+            print(f"{wc_chars(file_path)} {file_path}")
