@@ -10,6 +10,8 @@ import argparse
 
 
 class WCObject(abc.ABC):
+    """Collection of methods to display wc command output."""
+
     @property
     @abc.abstractmethod
     def bytes(self) -> int:
@@ -42,6 +44,8 @@ class WCObject(abc.ABC):
 
 @dataclass
 class WCFile(WCObject):
+    """WCObject when wc is called against a file path."""
+
     file_path: str | Path
 
     @property
@@ -76,6 +80,8 @@ class WCFile(WCObject):
 
 @dataclass
 class WCText(WCObject):
+    """WCObject when wc is called against stdin."""
+
     text: str
 
     @property
@@ -103,6 +109,7 @@ class WCText(WCObject):
 
 
 def main() -> None:
+    """Execute wc (via the ccwc command)."""
     parser = argparse.ArgumentParser()
     parser.add_argument("FILE", action="store", nargs="*")
     parser.add_argument("-c", "--bytes", action="store_true")
