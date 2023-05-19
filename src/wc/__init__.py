@@ -1,3 +1,3 @@
-from .wc import main, wc_bytes, wc_lines, wc_words, wc_chars
+from .wc import main, WCFile, WCText
 
-__all__ = ["main", "wc_bytes", "wc_lines", "wc_words", "wc_chars"]
+__all__ = ["main", "WCFile", "WCText"]
