@@ -23,4 +23,4 @@ def test_wc_bytes_cli(capfd, sample_txt: Path) -> None:
     exit_status = os.system(f"ccwc -c {sample_txt}")
     captured = capfd.readouterr()
     assert exit_status == 0
-    assert captured.out.strip() == "341836"
+    assert captured.out.strip() == f"341836 {sample_txt}"
