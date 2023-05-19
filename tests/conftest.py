@@ -32,6 +32,6 @@ def sample_txt(tmp_path: Path) -> Generator[WCFixture, None, None]:
         bytes=341836,
         lines=7137,
         words=58159,
-        chars=339120,
+        chars=331983,  # 339120 if \r\n are separate
     )
     yield fixture_data
