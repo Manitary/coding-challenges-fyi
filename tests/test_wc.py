@@ -66,3 +66,14 @@ def test_wc_chars_cli(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) 
     captured = capfd.readouterr()
     assert exit_status == 0
     assert captured.out.rstrip() == f"{sample_txt.chars} {sample_txt.path}"
+
+
+def test_wc_no_args(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) -> None:
+    """Test wc without additional arguments."""
+    exit_status = os.system(f"ccwc {sample_txt.path}")
+    captured = capfd.readouterr()
+    assert exit_status == 0
+    assert (
+        captured.out.rstrip()
+        == f"{sample_txt.lines}\t{sample_txt.words}\t{sample_txt.bytes}\t{sample_txt.path}"
+    )
