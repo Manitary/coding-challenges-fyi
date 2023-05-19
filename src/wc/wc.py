@@ -15,4 +15,4 @@ def main() -> None:
     args = parser.parse_args()
     for file_path in args.file_path:
         if args.bytes:
-            print(wc(file_path))
+            print(f"{wc(file_path)} {file_path}")
