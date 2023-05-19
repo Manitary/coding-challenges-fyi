@@ -25,6 +25,10 @@ def wc_words(file_path: str | Path) -> int:
     return num_words
 
 
+def wc_chars(file_path: str | Path) -> int:
+    """Return the character count."""
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path", action="store", nargs="+")
