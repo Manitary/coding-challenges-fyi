@@ -77,3 +77,11 @@ def test_wc_no_args(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) ->
         captured.out.rstrip()
         == f"{sample_txt.lines}\t{sample_txt.words}\t{sample_txt.bytes}\t{sample_txt.path}"
     )
+
+
+def test_wc_stdin(capfd: pytest.CaptureFixture[str], sample_txt: WCFixture) -> None:
+    """Test wc reading from stdin."""
+    exit_status = os.system(f"type {sample_txt.path} | ccwc -l")
+    captured = capfd.readouterr()
+    assert exit_status == 0
+    assert captured.out.rstrip() == f"{sample_txt.lines}"
