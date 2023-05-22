@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from pathlib import Path
-from collections import Counter
+from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Self, Sequence
 
@@ -89,3 +89,18 @@ class HuffmanTree:
         tree.root = HuffmanInternalNode(weight=combined_weight)
         tree.root.left, tree.root.right = element_1.root, element_2.root
         return tree
+
+    def generate_table(self) -> dict[str, int]:
+        """Generate the prefix-code table from the tree."""
+        table: dict[str, int] = {}
+        if self.root is None:
+            return table
+        queue: deque[tuple[HuffmanNode | None, int]] = deque([(self.root, 0)])
+        while queue:
+            node, prefix = queue.popleft()
+            if isinstance(node, HuffmanLeafNode):
+                table[node.value] = prefix
+            elif isinstance(node, HuffmanInternalNode):
+                queue.append((node.left, prefix << 1))
+                queue.append((node.right, prefix << 1 | 1))
+        return table
