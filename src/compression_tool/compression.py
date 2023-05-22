@@ -90,17 +90,59 @@ class HuffmanTree:
         tree.root.left, tree.root.right = element_1.root, element_2.root
         return tree
 
-    def generate_table(self) -> dict[str, int]:
+    def generate_table(self) -> dict[str, str]:
         """Generate the prefix-code table from the tree."""
-        table: dict[str, int] = {}
+        table: dict[str, str] = {}
         if self.root is None:
             return table
-        queue: deque[tuple[HuffmanNode | None, int]] = deque([(self.root, 0)])
+        queue: deque[tuple[HuffmanNode | None, str]] = deque([(self.root, "")])
         while queue:
             node, prefix = queue.popleft()
             if isinstance(node, HuffmanLeafNode):
                 table[node.value] = prefix
             elif isinstance(node, HuffmanInternalNode):
-                queue.append((node.left, prefix << 1))
-                queue.append((node.right, prefix << 1 | 1))
+                queue.append((node.left, f"{prefix}0"))
+                queue.append((node.right, f"{prefix}1"))
         return table
+
+    def generate_header(self) -> bytes:
+        """Generate the file header from the tree.
+        
+        Format:
+        - 4 bytes for the length of the tree encoding
+        - 4 bytes for the length of the characters encoding
+        - tree encoding
+        - characters encoding"""
+        header = bytearray()
+        tree, char = self.encode_tree()
+        tree_encoded = encode_binary_string(tree)
+        header.extend(len(tree_encoded).to_bytes(4))
+        char_encoded = char.encode()
+        header.extend(len(char_encoded).to_bytes(4))
+        header.extend(tree_encoded)
+        header.extend(char_encoded)
+        return bytes(header)
+
+    def encode_tree(self) -> tuple[str, str]:
+        """Return a binary encoding of the tree.
+
+        The tree is traversed BF, left-to-right;
+        0 = leaf, 1 = internal node."""
+        tree_encoding = ""
+        char_encoding = ""
+        queue: deque[HuffmanNode | None] = deque([self.root])
+        while queue:
+            node = queue.popleft()
+            if isinstance(node, HuffmanInternalNode):
+                queue.extend([node.left, node.right])
+                tree_encoding += "1"
+            elif isinstance(node, HuffmanLeafNode):
+                tree_encoding += "0"
+                char_encoding += node.value
+        return tree_encoding, char_encoding
+
+
+def encode_binary_string(string: str) -> bytes:
+    """Represent a string of 0/1 into bytes."""
+    num = int(string, 2)
+    return num.to_bytes((num.bit_length() + 7) // 8)
