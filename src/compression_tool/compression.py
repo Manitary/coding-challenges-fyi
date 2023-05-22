@@ -145,6 +145,10 @@ class HuffmanTree:
                 char_encoding += node.value
         return tree_encoding, char_encoding
 
+    @staticmethod
+    def decode_header(header: bytes) -> dict[str, str]:
+        """Return the prefix table obtained by decoding the header of a compressed file."""
+
 
 def encode_binary_string(string: str) -> bytes:
     """Represent a string of 0/1 into bytes."""

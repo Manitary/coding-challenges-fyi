@@ -56,5 +56,5 @@ def test_huffman_header_to_prefix_table(
 ) -> None:
     """Test the reconstruction of the prefix table from the file header."""
     header, expected_table = compression_sample_header_to_prefix_table
-    calculated_table = tree.decode_header(header)
+    calculated_table = compression_tool.HuffmanTree.decode_header(header)
     assert calculated_table == expected_table
