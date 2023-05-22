@@ -15,6 +15,5 @@ def test_frequency(compression_sample_txt: tuple[Path, dict[str, int]]) -> None:
     """Test the frequency of given characters."""
     file_path, data = compression_sample_txt
     compress = compression_tool.Compress(file_path)
-    compress.scan()
     for character, frequency in data.items():
         assert compress.frequency(character) == frequency
