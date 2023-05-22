@@ -71,10 +71,10 @@ class WCFixture:
 
 
 @pytest.fixture
-def sample_txt(tmp_path: Path) -> Generator[WCFixture, None, None]:
+def wc_sample_txt(tmp_path: Path) -> Generator[WCFixture, None, None]:
     """Yield a text file data used to test wc."""
     file_name = "test.txt"
-    copy_path = shutil.copy2(ASSET_ROOT / file_name, tmp_path / file_name)
+    copy_path = shutil.copy2(ASSET_ROOT / "test_wc" / file_name, tmp_path / file_name)
     fixture_data = WCFixture(
         name=file_name,
         path=copy_path,
@@ -87,6 +87,6 @@ def sample_txt(tmp_path: Path) -> Generator[WCFixture, None, None]:
 
 
 @pytest.fixture(params=JSON_ASSETS, ids=JSONTestFile.get_stem)
-def sample_json(request: pytest.FixtureRequest) -> Generator[JSONTestFile, None, None]:
+def json_sample(request: pytest.FixtureRequest) -> Generator[JSONTestFile, None, None]:
     """Yield a sample JSON to test."""
     yield request.param

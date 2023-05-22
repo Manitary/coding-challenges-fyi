@@ -4,10 +4,10 @@ from conftest import JSONTestFile
 import json_parser
 
 
-def test_json_parser(sample_json: JSONTestFile) -> None:
+def test_json_parser(json_sample: JSONTestFile) -> None:
     """Test the JSON files."""
     # result = json_parser.parse(sample_json.path)
-    with open(sample_json.path, encoding="utf8") as f:
+    with open(json_sample.path, encoding="utf8") as f:
         lexer = json_parser.Lexer(f.read())
     try:
         lexer.tokenize()
@@ -15,6 +15,6 @@ def test_json_parser(sample_json: JSONTestFile) -> None:
             print(f"{token.type} | {token.value}")
         parser = json_parser.JSONParser(lexer.tokens)
         result = parser.validate()
-        assert sample_json.result == result
+        assert json_sample.result == result
     except json_parser.JSONLexerError:
-        assert sample_json.result is False
+        assert json_sample.result is False
