@@ -16,9 +16,27 @@ class Compress:
             self._contents = f.read()
         self._frequency = Counter(self._contents)
 
+    @property
+    def contents(self) -> str:
+        """Return the contents of the file."""
+        return self._contents
+
     def frequency(self, char: str) -> int:
         """Return the frequency of a character."""
         return self._frequency[char]
+
+    def compress(self, path: str | Path) -> None:
+        """Compress the contents into a file."""
+        tree = HuffmanTree.from_frequency(self._frequency)
+        encoding_table = tree.generate_table()
+        header = tree.generate_header()
+        encoded_contents = "".join(encoding_table[char] for char in self._contents)
+        if pad_length := len(encoded_contents) % 8:
+            encoded_contents += "0" * pad_length
+        with open(path, "wb") as f:
+            f.write(header)
+            for i in range(0, len(encoded_contents), 8):
+                f.write(int(encoded_contents[i : i + 8], 2).to_bytes())
 
 
 @dataclass
@@ -187,25 +205,44 @@ class HuffmanTree:
         return tree
 
     @staticmethod
-    def decode_header(file_contents: bytes) -> dict[str, str]:
+    def decode_header(file_contents: bytes) -> tuple[dict[str, str], int]:
         """Return the prefix table obtained by decoding the header of a compressed file."""
         tree_length = int.from_bytes(file_contents[:4])
         encoding_length = int.from_bytes(file_contents[4:8])
+        contents_index = 8 + tree_length + encoding_length
         tree_data = bin(int.from_bytes(file_contents[8 : 8 + tree_length]))[2:]
-        characters = file_contents[
-            8 + tree_length : 8 + tree_length + encoding_length
-        ].decode()
+        characters = file_contents[8 + tree_length : contents_index].decode()
         tree = HuffmanTree.decoded_from_header(
             encoded_tree=tree_data, characters=characters
         )
-        return tree.generate_table()
+        return tree.generate_table(), contents_index
 
     @staticmethod
-    def decode_file_contents(file_contents: bytes):
+    def decode_file_contents(file_contents: bytes) -> str:
         """Decode a file."""
+        prefix_table, idx = HuffmanTree.decode_header(file_contents)
+        prefix_table = {value: key for key, value in prefix_table.items()}
+        encoded_text = "".join(
+            bin(byte)[2:].rjust(8, "0") for byte in file_contents[idx:]
+        )
+        decoded_text = ""
+        char = ""
+        for bit in encoded_text:
+            char += bit
+            if char in prefix_table:
+                decoded_text += prefix_table[char]
+                char = ""
+        return decoded_text
 
 
 def encode_binary_string(string: str) -> bytes:
     """Represent a string of 0/1 into bytes."""
     num = int(string, 2)
     return num.to_bytes((num.bit_length() + 7) // 8)
+
+
+def decompress_file(file_path: str | Path) -> str:
+    """Return the contents of a file that was compressed with Huffman encoding."""
+    with open(file_path, "rb") as f:
+        contents = f.read()
+    return HuffmanTree.decode_file_contents(contents)

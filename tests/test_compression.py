@@ -56,5 +56,17 @@ def test_huffman_header_to_prefix_table(
 ) -> None:
     """Test the reconstruction of the prefix table from the file header."""
     header, expected_table = compression_sample_header_to_prefix_table
-    calculated_table = compression_tool.HuffmanTree.decode_header(header)
+    calculated_table, _ = compression_tool.HuffmanTree.decode_header(header)
     assert calculated_table == expected_table
+
+
+def test_huffman_encoding(
+    compression_sample_txt: tuple[Path, dict[str, int]], tmp_path: Path
+) -> None:
+    """Test that encoding and decoding a text file results in the same contents."""
+    sample_path, _ = compression_sample_txt
+    file_path = tmp_path / "compressed.bin"
+    contents = compression_tool.Compress(sample_path)
+    contents.compress(file_path)
+    decompressed_contents = compression_tool.decompress_file(file_path)
+    assert decompressed_contents == contents.contents
