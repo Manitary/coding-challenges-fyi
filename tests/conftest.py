@@ -5,7 +5,7 @@ import shutil
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Generator
+from typing import Generator, NamedTuple
 from collections import Counter
 import glob
 import pytest
@@ -109,14 +109,11 @@ def compression_sample_binary() -> Generator[Path, None, None]:
     yield ASSET_ROOT / "test_compression" / file_name
 
 
-@pytest.fixture
-def compression_sample_frequency() -> (
-    Generator[tuple[Counter[str], HuffmanTree], None, None]
-):
-    """Yield a Counter."""
-    data = Counter(
-        {"C": 32, "D": 42, "E": 120, "K": 7, "L": 42, "M": 24, "U": 37, "Z": 2}
-    )
+def make_sample_huffman_tree() -> HuffmanTree:
+    """Huffman tree used for testing.
+
+    Example taken from: https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/Huffman.html
+    """
     tree = HuffmanTree()
     tree.root = HuffmanInternalNode(weight=306)
     tree.root.left = HuffmanLeafNode(weight=120, value="E")
@@ -133,4 +130,47 @@ def compression_sample_frequency() -> (
     tree.root.right.right.right.right.right = HuffmanLeafNode(weight=24, value="M")
     tree.root.right.right.right.right.left.left = HuffmanLeafNode(weight=2, value="Z")
     tree.root.right.right.right.right.left.right = HuffmanLeafNode(weight=7, value="K")
+    return tree
+
+
+HuffmanSample = NamedTuple(
+    "Huffman",
+    [("frequency", Counter[str]), ("tree", HuffmanTree), ("table", dict[str, int])],
+)
+
+HUFFMAN_SAMPLE = HuffmanSample(
+    frequency=Counter(
+        {"C": 32, "D": 42, "E": 120, "K": 7, "L": 42, "M": 24, "U": 37, "Z": 2}
+    ),
+    tree=make_sample_huffman_tree(),
+    table={
+        "E": 0b0,
+        "U": 0b100,
+        "D": 0b101,
+        "L": 0b110,
+        "C": 0b1110,
+        "M": 0b11111,
+        "Z": 0b111100,
+        "K": 0b111101,
+    },
+)
+
+
+@pytest.fixture
+def compression_sample_frequency() -> (
+    Generator[tuple[Counter[str], HuffmanTree], None, None]
+):
+    """Yield a Counter of character frequency and its corresponding Huffman tree."""
+    data = HUFFMAN_SAMPLE.frequency
+    tree = HUFFMAN_SAMPLE.tree
     yield data, tree
+
+
+@pytest.fixture
+def compression_sample_prefix_table() -> (
+    Generator[tuple[HuffmanTree, dict[str, int]], None, None]
+):
+    """Yield a Huffman tree and its corresponding prefix table."""
+    tree = HUFFMAN_SAMPLE.tree
+    table = HUFFMAN_SAMPLE.table
+    yield tree, table

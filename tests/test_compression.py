@@ -20,10 +20,19 @@ def test_frequency(compression_sample_txt: tuple[Path, dict[str, int]]) -> None:
         assert compress.frequency(character) == frequency
 
 
-def test_tree_huffman(
+def test_huffman_tree_construction(
     compression_sample_frequency: tuple[Counter[str], compression_tool.HuffmanTree]
 ) -> None:
     """Test the construction of a Huffman encoding tree from given frequency data."""
     data, expected_tree = compression_sample_frequency
     calculated_tree = compression_tool.HuffmanTree.from_frequency(data)
     assert calculated_tree == expected_tree
+
+
+def test_huffman_tree_prefix_table(
+    compression_sample_prefix_table: tuple[compression_tool.HuffmanTree, dict[str, int]]
+) -> None:
+    """Test the construction of the prefix table from a given Huffman tree."""
+    tree, expected_table = compression_sample_prefix_table
+    calculated_table = tree.generate_table()
+    assert calculated_table == expected_table
