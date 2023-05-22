@@ -43,6 +43,10 @@ class HuffmanInternalNode(HuffmanNode):
     right: HuffmanNode | None = None
 
 
+class HuffmanDecodeError(ValueError):
+    """Raised when the header data cannot be decoded into a valid Huffman tree."""
+
+
 @dataclass
 class HuffmanTree:
     """A Huffman tree."""
@@ -60,7 +64,7 @@ class HuffmanTree:
     def from_frequency(cls, frequency: Counter[str]) -> Self:
         """Build a Huffman tree from a collection of character frequencies."""
         nodes = [
-            HuffmanTree(HuffmanLeafNode(weight=count, value=character))
+            HuffmanTree(root=HuffmanLeafNode(weight=count, value=character))
             for character, count in frequency.items()
         ]
         if not nodes:
@@ -145,9 +149,60 @@ class HuffmanTree:
                 char_encoding += node.value
         return tree_encoding, char_encoding
 
+    @classmethod
+    def decoded_from_header(cls, encoded_tree: str, characters: str) -> Self:
+        """Return an Huffman tree with no weights from encoded data."""
+        if len(encoded_tree) != 2 * len(characters) - 1:
+            raise HuffmanDecodeError("The number of characters don't fit the tree.")
+        if not encoded_tree:
+            return HuffmanTree()
+        if len(encoded_tree) == 1:
+            if encoded_tree == "1":
+                raise HuffmanDecodeError(
+                    "The root of the tree is an intermediate node has no children."
+                )
+            return HuffmanTree(root=HuffmanLeafNode(weight=0, value=characters))
+        if encoded_tree[0] == "0":
+            raise HuffmanDecodeError(
+                "The root of the tree is a leaf node with children."
+            )
+        root = HuffmanInternalNode(weight=0)
+        tree = HuffmanTree(root=root)
+        nodes_to_process: deque[HuffmanInternalNode] = deque([root])
+        i = 0
+        for char in encoded_tree[1:]:
+            if char == "0":
+                new_node = HuffmanLeafNode(weight=0, value=characters[i])
+                i += 1
+            else:
+                new_node = HuffmanInternalNode(weight=0)
+            if nodes_to_process[0].left is None:
+                nodes_to_process[0].left = new_node
+            else:
+                nodes_to_process.popleft().right = new_node
+            if isinstance(new_node, HuffmanInternalNode):
+                nodes_to_process.append(new_node)
+        if nodes_to_process:
+            raise HuffmanDecodeError("There are intermediate nodes with no children.")
+        return tree
+
     @staticmethod
-    def decode_header(header: bytes) -> dict[str, str]:
+    def decode_header(file_contents: bytes) -> dict[str, str]:
         """Return the prefix table obtained by decoding the header of a compressed file."""
+        tree_length = int.from_bytes(file_contents[:4])
+        encoding_length = int.from_bytes(file_contents[4:8])
+        tree_data = bin(int.from_bytes(file_contents[8 : 8 + tree_length]))[2:]
+        characters = file_contents[
+            8 + tree_length : 8 + tree_length + encoding_length
+        ].decode()
+        tree = HuffmanTree.decoded_from_header(
+            encoded_tree=tree_data, characters=characters
+        )
+        return tree.generate_table()
+
+    @staticmethod
+    def decode_file_contents(file_contents: bytes):
+        """Decode a file."""
 
 
 def encode_binary_string(string: str) -> bytes:
