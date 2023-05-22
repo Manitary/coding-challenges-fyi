@@ -163,7 +163,7 @@ HUFFMAN_SAMPLE = HuffmanSample(
 
 
 @pytest.fixture
-def compression_sample_frequency() -> (
+def compression_sample_frequency_to_tree() -> (
     Generator[tuple[Counter[str], HuffmanTree], None, None]
 ):
     """Yield a Counter of character frequency and its corresponding Huffman tree."""
@@ -173,7 +173,7 @@ def compression_sample_frequency() -> (
 
 
 @pytest.fixture
-def compression_sample_prefix_table() -> (
+def compression_sample_tree_to_prefix_table() -> (
     Generator[tuple[HuffmanTree, dict[str, str]], None, None]
 ):
     """Yield a Huffman tree and its corresponding prefix table."""
@@ -183,8 +183,20 @@ def compression_sample_prefix_table() -> (
 
 
 @pytest.fixture
-def compression_sample_header() -> Generator[tuple[HuffmanTree, bytes], None, None]:
+def compression_sample_tree_to_header() -> (
+    Generator[tuple[HuffmanTree, bytes], None, None]
+):
     """Yield a Huffman tree and its corresponding file header."""
     tree = HUFFMAN_SAMPLE.tree
     header = HUFFMAN_SAMPLE.header
     yield tree, header
+
+
+@pytest.fixture
+def compression_sample_header_to_prefix_table() -> (
+    Generator[tuple[bytes, dict[str, str]], None, None]
+):
+    """Yield a compressed file header and the corresponding prefix table."""
+    header = HUFFMAN_SAMPLE.header
+    table = HUFFMAN_SAMPLE.table
+    yield header, table
