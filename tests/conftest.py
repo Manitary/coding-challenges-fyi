@@ -90,3 +90,18 @@ def wc_sample_txt(tmp_path: Path) -> Generator[WCFixture, None, None]:
 def json_sample(request: pytest.FixtureRequest) -> Generator[JSONTestFile, None, None]:
     """Yield a sample JSON to test."""
     yield request.param
+
+
+@pytest.fixture
+def compression_sample_txt() -> Generator[tuple[Path, dict[str, int]], None, None]:
+    """Yield a text file and associated data to test."""
+    file_name = "test.txt"
+    data = {"X": 333, "t": 223000}
+    yield ASSET_ROOT / "test_compression" / file_name, data
+
+
+@pytest.fixture
+def compression_sample_binary() -> Generator[Path, None, None]:
+    """Yield a binary file."""
+    file_name = "test_invalid.bin"
+    yield ASSET_ROOT / "test_compression" / file_name
