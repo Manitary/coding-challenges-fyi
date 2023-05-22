@@ -122,7 +122,7 @@ def make_sample_huffman_tree() -> HuffmanTree:
     tree.root.right.left.left = HuffmanLeafNode(weight=37, value="U")
     tree.root.right.left.right = HuffmanLeafNode(weight=42, value="D")
     tree.root.right.right = HuffmanInternalNode(weight=107)
-    tree.root.right.right.left = HuffmanLeafNode(weight=42, value="D")
+    tree.root.right.right.left = HuffmanLeafNode(weight=42, value="L")
     tree.root.right.right.right = HuffmanInternalNode(weight=65)
     tree.root.right.right.right.left = HuffmanLeafNode(weight=32, value="C")
     tree.root.right.right.right.right = HuffmanInternalNode(weight=33)
