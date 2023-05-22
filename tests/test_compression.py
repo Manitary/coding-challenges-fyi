@@ -36,3 +36,12 @@ def test_huffman_tree_prefix_table(
     tree, expected_table = compression_sample_prefix_table
     calculated_table = tree.generate_table()
     assert calculated_table == expected_table
+
+
+def test_huffman_tree_header(
+    compression_sample_header: tuple[compression_tool.HuffmanTree, bytes]
+) -> None:
+    """Test the construction of the file header for compression."""
+    tree, expected_header = compression_sample_header
+    calculated_header = tree.generate_header()
+    assert calculated_header == expected_header
