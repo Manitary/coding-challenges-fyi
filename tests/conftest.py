@@ -6,8 +6,10 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator
+from collections import Counter
 import glob
 import pytest
+from compression_tool import HuffmanTree, HuffmanLeafNode, HuffmanInternalNode
 
 ASSET_ROOT = Path(__file__).parent.resolve() / "assets"
 
@@ -105,3 +107,30 @@ def compression_sample_binary() -> Generator[Path, None, None]:
     """Yield a binary file."""
     file_name = "test_invalid.bin"
     yield ASSET_ROOT / "test_compression" / file_name
+
+
+@pytest.fixture
+def compression_sample_frequency() -> (
+    Generator[tuple[Counter[str], HuffmanTree], None, None]
+):
+    """Yield a Counter."""
+    data = Counter(
+        {"C": 32, "D": 42, "E": 120, "K": 7, "L": 42, "M": 24, "U": 37, "Z": 2}
+    )
+    tree = HuffmanTree()
+    tree.root = HuffmanInternalNode(weight=306)
+    tree.root.left = HuffmanLeafNode(weight=120, value="E")
+    tree.root.right = HuffmanInternalNode(weight=186)
+    tree.root.right.left = HuffmanInternalNode(weight=79)
+    tree.root.right.left.left = HuffmanLeafNode(weight=37, value="U")
+    tree.root.right.left.right = HuffmanLeafNode(weight=42, value="D")
+    tree.root.right.right = HuffmanInternalNode(weight=107)
+    tree.root.right.right.left = HuffmanLeafNode(weight=42, value="D")
+    tree.root.right.right.right = HuffmanInternalNode(weight=65)
+    tree.root.right.right.right.left = HuffmanLeafNode(weight=32, value="C")
+    tree.root.right.right.right.right = HuffmanInternalNode(weight=33)
+    tree.root.right.right.right.right.left = HuffmanInternalNode(weight=9)
+    tree.root.right.right.right.right.right = HuffmanLeafNode(weight=24, value="M")
+    tree.root.right.right.right.right.left.left = HuffmanLeafNode(weight=2, value="Z")
+    tree.root.right.right.right.right.left.right = HuffmanLeafNode(weight=7, value="K")
+    yield data, tree

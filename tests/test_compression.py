@@ -1,6 +1,7 @@
 """Tests for wc."""
 
 from pathlib import Path
+from collections import Counter
 import pytest
 import compression_tool
 
@@ -17,3 +18,12 @@ def test_frequency(compression_sample_txt: tuple[Path, dict[str, int]]) -> None:
     compress = compression_tool.Compress(file_path)
     for character, frequency in data.items():
         assert compress.frequency(character) == frequency
+
+
+def test_tree_Huffman(
+    compression_sample_frequency: tuple[Counter[str], compression_tool.HuffmanTree]
+) -> None:
+    """Test the construction of a Huffman encoding tree from given frequency data."""
+    data, expected_tree = compression_sample_frequency
+    calculated_tree = compression_tool.HuffmanTree(data)
+    assert calculated_tree == expected_tree

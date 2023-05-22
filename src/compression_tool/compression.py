@@ -16,3 +16,15 @@ class Compress:
     def frequency(self, char: str) -> int:
         """Return the frequency of a character."""
         return self._frequency[char]
+
+
+class HuffmanTree:
+    ...
+
+
+class HuffmanLeafNode:
+    ...
+
+
+class HuffmanInternalNode:
+    ...
