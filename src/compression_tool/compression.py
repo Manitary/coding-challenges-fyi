@@ -35,6 +35,7 @@ class HuffmanLeafNode(HuffmanNode):
     value: str
 
 
+@dataclass
 class HuffmanInternalNode(HuffmanNode):
     """Non-leaf node of a Huffman tree."""
 
@@ -82,12 +83,15 @@ class HuffmanTree:
         return elements
 
     @staticmethod
-    def huffman_merge(element_1: HuffmanTree, element_2: HuffmanTree) -> HuffmanTree:
+    def huffman_merge(
+        element_left: HuffmanTree, element_right: HuffmanTree
+    ) -> HuffmanTree:
         """Combine two Huffman trees."""
-        combined_weight = element_1.weight + element_2.weight
-        tree = HuffmanTree()
-        tree.root = HuffmanInternalNode(weight=combined_weight)
-        tree.root.left, tree.root.right = element_1.root, element_2.root
+        combined_weight = element_left.weight + element_right.weight
+        root = HuffmanInternalNode(
+            weight=combined_weight, left=element_left.root, right=element_right.root
+        )
+        tree = HuffmanTree(root=root)
         return tree
 
     def generate_table(self) -> dict[str, str]:
@@ -107,7 +111,7 @@ class HuffmanTree:
 
     def generate_header(self) -> bytes:
         """Generate the file header from the tree.
-        
+
         Format:
         - 4 bytes for the length of the tree encoding
         - 4 bytes for the length of the characters encoding
