@@ -200,3 +200,17 @@ def compression_sample_header_to_prefix_table() -> (
     header = HUFFMAN_SAMPLE.header
     table = HUFFMAN_SAMPLE.table
     yield header, table
+
+
+@pytest.fixture
+def cut_sample_csv() -> Generator[Path, None, None]:
+    """Yield the path to a csv file."""
+    file_name = "fourchords.csv"
+    yield ASSET_ROOT / "test_cut" / file_name
+
+
+@pytest.fixture
+def cut_sample_tsv() -> Generator[Path, None, None]:
+    """Yield the path to a tsv file."""
+    file_name = "sample.tsv"
+    yield ASSET_ROOT / "test_cut" / file_name
