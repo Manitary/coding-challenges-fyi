@@ -23,7 +23,7 @@ def test_cut_one_field_cli(
     capfd: pytest.CaptureFixture[str], cut_sample_tsv: Path
 ) -> None:
     """Test cut -f 2."""
-    exit_status = os.system(f"cccut -f 2 {cut_sample_tsv}")
+    exit_status = os.system(f"cccut -f2 {cut_sample_tsv}")
     captured = capfd.readouterr()
     assert exit_status == 0
     assert captured.out.rstrip() == "f1\r\n1\r\n6\r\n11\r\n16\r\n21"
@@ -41,6 +41,18 @@ def test_cut_two_fields_cli(
 ) -> None:
     """Test cut -f 2 3."""
     exit_status = os.system(f"cccut -f 1,2 {cut_sample_tsv}")
+    captured = capfd.readouterr()
+    assert exit_status == 0
+    assert (
+        captured.out.rstrip() == "f0\tf1\r\n0\t1\r\n5\t6\r\n10\t11\r\n15\t16\r\n20\t21"
+    )
+
+
+def test_cut_two_fields_cli_alt_syntax(
+    capfd: pytest.CaptureFixture[str], cut_sample_tsv: Path
+) -> None:
+    """Test cut -f 2 3."""
+    exit_status = os.system(f'cccut -f"1 2" {cut_sample_tsv}')
     captured = capfd.readouterr()
     assert exit_status == 0
     assert (

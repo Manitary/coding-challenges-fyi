@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import re
 from pathlib import Path
 from typing import Sequence
 
@@ -32,4 +33,8 @@ def main() -> None:
         return
     for file_path in args.FILE:
         if args.fields:
-            print(cut_fields(file_path, fields=list(map(int, args.fields.split(",")))))
+            print(
+                cut_fields(
+                    file_path, fields=list(map(int, re.split(r",|\s", args.fields)))
+                )
+            )
