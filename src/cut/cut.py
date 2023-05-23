@@ -24,9 +24,12 @@ def main() -> None:
     """Execute cut (via the cccut command)."""
     parser = argparse.ArgumentParser()
     parser.add_argument("FILE", action="store", nargs="*")
-    parser.add_argument("-f", "--fields", action="store", nargs="+")
+    parser.add_argument("-f", "--fields", action="store", type=str)
     args = parser.parse_args()
     if not sys.stdin.isatty():
         args.FILE.extend(sys.stdin.read())
     if args.FILE is None:
         return
+    for file_path in args.FILE:
+        if args.fields:
+            print(cut_fields(file_path, fields=list(map(int, args.fields.split(",")))))
