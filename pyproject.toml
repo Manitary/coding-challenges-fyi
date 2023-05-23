@@ -21,10 +21,11 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["wc"]
+include = ["wc", "cut"]
 
 [project.urls]
 "Homepage" = "https://github.com/Manitary/coding-challenges-fyi"
 
 [project.scripts]
 ccwc = "wc:main"
+cccut = "cut:main"

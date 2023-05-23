@@ -7,7 +7,7 @@ import wc
 
 
 def test_entrypoint() -> None:
-    """Test that the command runs."""
+    """Test that the command is recognised."""
     exit_status = os.system("ccwc --help")
     assert exit_status == 0
 
