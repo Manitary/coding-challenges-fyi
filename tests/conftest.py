@@ -205,7 +205,7 @@ def compression_sample_header_to_prefix_table() -> (
 @pytest.fixture
 def cut_sample_csv() -> Generator[Path, None, None]:
     """Yield the path to a csv file."""
-    file_name = "fourchords.csv"
+    file_name = "fourchords_short.csv"
     yield ASSET_ROOT / "test_cut" / file_name
 
 

@@ -58,3 +58,27 @@ def test_cut_two_fields_cli_alt_syntax(
     assert (
         captured.out.rstrip() == "f0\tf1\r\n0\t1\r\n5\t6\r\n10\t11\r\n15\t16\r\n20\t21"
     )
+
+
+def test_cut_delimiter(cut_sample_csv: Path) -> None:
+    """Test ``cut -d,``."""
+    result = cut.cut_fields(file_path=cut_sample_csv, fields=[1], delimiter=",")
+    expected = (
+        'Song title\n"10000 Reasons (Bless the Lord)"'
+        '\n"20 Good Reasons"\n"Adore You"\n"Africa"'
+    )
+
+    assert result == expected
+
+
+def test_cut_delimiter_cli(
+    capfd: pytest.CaptureFixture[str], cut_sample_csv: Path
+) -> None:
+    """Test ``cut -d,``."""
+    exit_status = os.system(f"cccut -f1 -d, {cut_sample_csv}")
+    captured = capfd.readouterr()
+    assert exit_status == 0
+    assert captured.out.rstrip() == (
+        'Song title\r\n"10000 Reasons (Bless the Lord)"'
+        '\r\n"20 Good Reasons"\r\n"Adore You"\r\n"Africa"'
+    )
